@@ -14,7 +14,7 @@
     "license": "GPL-3.0-or-later",
     "homepage": "https://daniel-klas.de",
     "require": {
-        "matomo": ">=4.0.0-b1 <6.0.0-b1",
+        "matomo": ">=4.0.0-b1,<6.0.0-b1",
         "php": ">=8.0.0"
     }
 }
