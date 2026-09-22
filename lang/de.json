@@ -9,6 +9,7 @@
         "ProviderTypeOAuth2": "Nextcloud OAuth 2.0 (integrierte App)",
         "SettingClientId": "Client ID (Identifier)",
         "SettingClientIdHelp": "Die in Nextcloud für Matomo generierte Client-ID.",
+        "RedirectUriInlineHelp": "Tragen Sie genau diese Redirect-URI in Ihrem Nextcloud-Client ein: %1$s",
         "SettingClientSecret": "Client Secret",
         "SettingClientSecretHelp": "Das in Nextcloud generierte Client-Secret.",
         "SettingScope": "OAuth Scopes",

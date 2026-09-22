@@ -12,6 +12,7 @@ namespace Piwik\Plugins\NextcloudSSO;
 use Piwik\Piwik;
 use Piwik\Settings\FieldConfig;
 use Piwik\Settings\Setting;
+use Piwik\Url;
 
 /**
  * Defines administrative system settings for the NextcloudSSO plugin.
@@ -119,11 +120,23 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
         return $this->makeSetting('clientId', '', FieldConfig::TYPE_STRING, function (FieldConfig $field) {
             $field->title = Piwik::translate('NextcloudSSO_SettingClientId');
             $field->description = Piwik::translate('NextcloudSSO_SettingClientIdHelp');
+            $field->inlineHelp = Piwik::translate('NextcloudSSO_RedirectUriInlineHelp', [$this->getRedirectUri()]);
             $field->uiControl = FieldConfig::UI_CONTROL_TEXT;
             $field->transform = function ($value) {
                 return trim($value);
             };
         });
+    }
+
+    /**
+     * Computes the absolute callback URL that must be registered as the
+     * Redirect-URI in the Nextcloud OIDC/OAuth2 client configuration.
+     *
+     * @return string
+     */
+    public function getRedirectUri(): string
+    {
+        return Url::getCurrentUrlWithoutFileName() . 'index.php?module=NextcloudSSO&action=callback';
     }
 
     private function createClientSecretSetting(): Setting

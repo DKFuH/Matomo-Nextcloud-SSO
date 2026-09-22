@@ -77,7 +77,7 @@ class Controller extends \Piwik\Plugin\Controller
         $params = [
             'response_type'         => 'code',
             'client_id'             => $settings->clientId->getValue(),
-            'redirect_uri'          => $this->getRedirectUri(),
+            'redirect_uri'          => $settings->getRedirectUri(),
             'scope'                 => $settings->scope->getValue(),
             'state'                 => $state,
             'code_challenge'        => $codeChallenge,
@@ -176,7 +176,7 @@ class Controller extends \Piwik\Plugin\Controller
         $payload = [
             'grant_type'    => 'authorization_code',
             'code'          => $code,
-            'redirect_uri'  => $this->getRedirectUri(),
+            'redirect_uri'  => $settings->getRedirectUri(),
             'client_id'     => $settings->clientId->getValue(),
             'client_secret' => $settings->clientSecret->getValue(),
         ];
@@ -465,16 +465,6 @@ class Controller extends \Piwik\Plugin\Controller
         }
 
         return (string) $result;
-    }
-
-    /**
-     * Builds the absolute callback redirect URI.
-     *
-     * @return string
-     */
-    private function getRedirectUri(): string
-    {
-        return Url::getCurrentUrlWithoutFileName() . 'index.php?module=NextcloudSSO&action=callback';
     }
 
     /**
