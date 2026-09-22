@@ -271,7 +271,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
             return $base . '/apps/oauth2/authorize';
         }
 
-        return $base . '/apps/oidc_provider/authorize';
+        return $base . '/apps/oidc/authorize';
     }
 
     public function getEffectiveTokenUrl(): string
@@ -286,7 +286,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
             return $base . '/apps/oauth2/api/v1/token';
         }
 
-        return $base . '/apps/oidc_provider/token';
+        return $base . '/apps/oidc/token';
     }
 
     public function getEffectiveUserinfoUrl(): string
@@ -301,6 +301,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
             return $base . '/ocs/v2.php/cloud/user?format=json';
         }
 
-        return $base . '/apps/oidc_provider/userinfo';
+        return $base . '/apps/oidc/userinfo';
     }
 }

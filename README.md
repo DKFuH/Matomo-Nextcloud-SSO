@@ -24,7 +24,7 @@ Es orientiert sich an den unternehmensweiten SSO-Standards (Nextcloud als zentra
 
 ### Variante A: Nextcloud App `OIDC Identity Provider` (Empfohlen)
 
-1. In Nextcloud unter **Apps** die App **`OIDC Identity Provider`** (`oidc_provider`) installieren und aktivieren.
+1. In Nextcloud unter **Apps** die App **`OIDC Identity Provider`** (App-ID `oidc`, von H2CK) installieren und aktivieren.
 2. In Nextcloud als Administrator zu **Verwaltungseinstellungen &rarr; Sicherheit &rarr; OpenID Connect** navigieren.
 3. Einen neuen Client anlegen:
    - **Client-Name:** `Matomo Analytics`
