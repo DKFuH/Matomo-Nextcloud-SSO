@@ -547,8 +547,8 @@ class Controller extends \Piwik\Plugin\Controller
             $candidate = $login;
             $counter = 1;
 
-            // Ensure unique username
-            while (!empty($api->getUser($candidate))) {
+            // Ensure unique username (getUser() throws for a non-existent login, so use userExists() here)
+            while ($api->userExists($candidate)) {
                 $candidate = $login . '_' . $counter++;
             }
 
