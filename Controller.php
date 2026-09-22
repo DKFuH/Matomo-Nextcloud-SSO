@@ -59,7 +59,7 @@ class Controller extends \Piwik\Plugin\Controller
         }
 
         // Generate cryptographic CSRF state
-        $state = Common::generateRandomString(32);
+        $state = Common::getRandomString(32);
         $_SESSION[self::SESSION_STATE_KEY] = $state;
 
         // Generate PKCE code_verifier and code_challenge
@@ -281,7 +281,6 @@ class Controller extends \Piwik\Plugin\Controller
     {
         $nextcloudUserId = $profile['id'];
         $email = $profile['email'];
-        $displayName = $profile['name'];
 
         // 1. Check local mapping table
         $mappedLogin = $this->getMappedUser($nextcloudUserId);
@@ -314,7 +313,7 @@ class Controller extends \Piwik\Plugin\Controller
         }
 
         // 4. Create new Matomo user
-        $matomoLogin = $this->createUser($cleanLogin, $email, $displayName);
+        $matomoLogin = $this->createUser($cleanLogin, $email);
         $this->linkUser($matomoLogin, $nextcloudUserId, $email);
 
         return $matomoLogin;
@@ -331,18 +330,13 @@ class Controller extends \Piwik\Plugin\Controller
     private function syncUserAndRoles(SystemSettings $settings, string $matomoLogin, array $profile): void
     {
         $email = $profile['email'];
-        $displayName = $profile['name'];
         $groups = $profile['groups'];
 
-        // Sync metadata if enabled
-        if ($settings->syncUserInfo->getValue()) {
-            Access::doAsSuperUser(function () use ($matomoLogin, $email, $displayName) {
+        // Sync metadata if enabled (Matomo 5.x no longer supports a separate display name/alias field)
+        if ($settings->syncUserInfo->getValue() && !empty($email)) {
+            Access::doAsSuperUser(function () use ($matomoLogin, $email) {
                 try {
-                    $api = UsersManagerAPI::getInstance();
-                    $existing = $api->getUser($matomoLogin);
-                    $newEmail = !empty($email) ? $email : $existing['email'];
-                    $newAlias = !empty($displayName) ? $displayName : $existing['alias'];
-                    $api->updateUser($matomoLogin, null, $newEmail, $newAlias);
+                    UsersManagerAPI::getInstance()->updateUser($matomoLogin, null, $email);
                 } catch (\Throwable $e) {
                     // Ignore non-critical update errors
                 }
@@ -540,8 +534,8 @@ class Controller extends \Piwik\Plugin\Controller
     {
         return Access::doAsSuperUser(function () use ($email) {
             try {
-                $users = UsersManagerAPI::getInstance()->getUsersByEmail($email);
-                return !empty($users) ? reset($users) : null;
+                $user = UsersManagerAPI::getInstance()->getUserByEmail($email);
+                return !empty($user) ? $user : null;
             } catch (\Throwable $e) {
                 return null;
             }
@@ -553,13 +547,12 @@ class Controller extends \Piwik\Plugin\Controller
      *
      * @param string $login
      * @param string $email
-     * @param string $alias
      * @return string
      * @throws Exception
      */
-    private function createUser(string $login, string $email, string $alias): string
+    private function createUser(string $login, string $email): string
     {
-        return Access::doAsSuperUser(function () use ($login, $email, $alias) {
+        return Access::doAsSuperUser(function () use ($login, $email) {
             $api = UsersManagerAPI::getInstance();
             $candidate = $login;
             $counter = 1;
@@ -569,11 +562,10 @@ class Controller extends \Piwik\Plugin\Controller
                 $candidate = $login . '_' . $counter++;
             }
 
-            $randomPassword = Common::generateRandomString(32);
+            $randomPassword = Common::getRandomString(32);
             $safeEmail = !empty($email) ? $email : ($candidate . '@localhost');
-            $safeAlias = !empty($alias) ? $alias : $candidate;
 
-            $api->addUser($candidate, $randomPassword, $safeEmail, $safeAlias);
+            $api->addUser($candidate, $randomPassword, $safeEmail);
 
             return $candidate;
         });
