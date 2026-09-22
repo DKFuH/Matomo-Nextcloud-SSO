@@ -1,0 +1,20 @@
+{
+    "name": "NextcloudSSO",
+    "version": "1.0.0",
+    "description": "Single Sign-On (SSO) Authentifizierung für Matomo über Nextcloud OIDC / OAuth2 mit automatischem Benutzer-Provisioning und Gruppen-Mapping.",
+    "theme": false,
+    "keywords": ["login", "nextcloud", "sso", "oidc", "oauth2", "authentication", "identity"],
+    "authors": [
+        {
+            "name": "Daniel Klas",
+            "email": "kontakt@daniel-klas.de",
+            "homepage": "https://daniel-klas.de"
+        }
+    ],
+    "license": "GPL-3.0-or-later",
+    "homepage": "https://daniel-klas.de",
+    "require": {
+        "matomo": ">=4.0.0-b1 <6.0.0-b1",
+        "php": ">=8.0.0"
+    }
+}
