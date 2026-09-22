@@ -29,6 +29,15 @@ class Controller extends \Piwik\Plugin\Controller
     private const SESSION_RETURN_URL_KEY = 'nextcloudsso_return_url';
 
     /**
+     * True only while this controller is provisioning/syncing an SSO-authenticated account.
+     * Read by NextcloudSSO::skipPasswordConfirmationDuringProvisioning() to bypass Matomo's
+     * re-authentication requirement for accounts that have no password to confirm with.
+     *
+     * @var bool
+     */
+    public static bool $isProvisioningViaSso = false;
+
+    /**
      * Renders the Nextcloud SSO login button on the Matomo login screen.
      *
      * @return string
@@ -146,11 +155,17 @@ class Controller extends \Piwik\Plugin\Controller
             throw new Exception(Piwik::translate('NextcloudSSO_ErrorNoUserId'));
         }
 
-        // Provision or resolve Matomo user
-        $matomoLogin = $this->resolveOrProvisionUser($settings, $userProfile);
-
-        // Sync metadata & roles/groups
-        $this->syncUserAndRoles($settings, $matomoLogin, $userProfile);
+        // Provision or resolve Matomo user, and sync metadata & roles/groups.
+        // Accounts provisioned via SSO have no password, so Matomo's re-authentication
+        // requirement for sensitive changes (new user, SuperUser access, site access) is
+        // bypassed for the duration of this block only.
+        self::$isProvisioningViaSso = true;
+        try {
+            $matomoLogin = $this->resolveOrProvisionUser($settings, $userProfile);
+            $this->syncUserAndRoles($settings, $matomoLogin, $userProfile);
+        } finally {
+            self::$isProvisioningViaSso = false;
+        }
 
         // Initialize authenticated Matomo session
         $this->authenticateSession($matomoLogin);

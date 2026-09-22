@@ -31,11 +31,29 @@ class NextcloudSSO extends \Piwik\Plugin
     public function registerEvents(): array
     {
         return [
-            'Template.loginNav'               => 'renderLoginNav',
-            'AssetManager.getStylesheetFiles' => 'getStylesheetFiles',
-            'Session.beforeSessionStart'      => 'beforeSessionStart',
-            'Request.dispatch'                => 'onDispatch',
+            'Template.loginNav'                      => 'renderLoginNav',
+            'AssetManager.getStylesheetFiles'         => 'getStylesheetFiles',
+            'Session.beforeSessionStart'              => 'beforeSessionStart',
+            'Request.dispatch'                        => 'onDispatch',
+            'Login.userRequiresPasswordConfirmation'  => 'skipPasswordConfirmationDuringProvisioning',
         ];
+    }
+
+    /**
+     * SSO-provisioned accounts have no password the user could confirm with, so we skip
+     * Matomo's re-authentication requirement while our own callback is provisioning/syncing
+     * the account. Scoped to Controller::$isProvisioningViaSso, which is only true for the
+     * duration of our own callback() action.
+     *
+     * @param bool $requiresPasswordConfirmation
+     * @param string $login
+     * @return void
+     */
+    public function skipPasswordConfirmationDuringProvisioning(&$requiresPasswordConfirmation, $login): void
+    {
+        if (Controller::$isProvisioningViaSso) {
+            $requiresPasswordConfirmation = false;
+        }
     }
 
     /**
