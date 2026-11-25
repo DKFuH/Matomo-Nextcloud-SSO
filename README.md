@@ -1,3 +1,21 @@
+# NextcloudSSO
+
+## Description
+
+Single Sign-On for Matomo using Nextcloud as the identity provider (OIDC / OAuth 2.0).
+
+- One-click login button on the Matomo login page; the regular login stays available as a fallback.
+- Automatic user provisioning on first login and profile sync (name, email) on every login.
+- Group mapping: members of a configurable Nextcloud group (default `admin`) become Matomo super users; all others get a configurable default role on configurable websites.
+- Works with the Nextcloud apps "OIDC Identity Provider" and the built-in "OAuth 2.0".
+- CSRF state validation and PKCE (SHA-256).
+
+Requires Matomo 6 and PHP 8.1 or newer. The plugin only contacts the Nextcloud instance you configure; no data is sent anywhere else.
+
+Setup (German): see below.
+
+---
+
 # Nextcloud SSO Plugin für Matomo
 
 Dieses Plugin ermöglicht die nahtlose Anmeldung und Authentifizierung an Matomo über Nextcloud als zentralen Identity Provider (Single Sign-On via OIDC / OAuth2).
@@ -49,7 +67,7 @@ Es orientiert sich an den unternehmensweiten SSO-Standards (Nextcloud als zentra
 1. Den Inhalt dieses Repositories in das Matomo-Plugin-Verzeichnis ablegen:
    ```bash
    cd /pfad/zu/matomo/plugins
-   git clone https://github.com/daniel-klas/matomo-plugin-NextcloudSSO.git NextcloudSSO
+   git clone https://github.com/DKFuH/Matomo-Nextcloud-SSO.git NextcloudSSO
    ```
    *(Der Ordnername muss exakt `NextcloudSSO` lauten)*
 
